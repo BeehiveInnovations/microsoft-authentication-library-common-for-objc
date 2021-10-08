@@ -150,6 +150,7 @@
     
         ASAuthorizationSingleSignOnRequest *ssoRequest = [self.ssoProvider createRequest];
         ssoRequest.requestedOperation = [operationRequest.class operation];
+        [ASAuthorizationSingleSignOnProvider setRequiresUI:YES forRequest:ssoRequest];
         
         NSDictionary *jsonDictionary = [operationRequest jsonDictionary];
         
@@ -195,7 +196,7 @@
         return anchor;
     }
     
-    return self.requestParameters.parentViewController.view.window;
+    return self.requestParameters.parentViewController ? self.requestParameters.parentViewController.view.window : self.requestParameters.presentationAnchorWindow;
 }
 
 #pragma mark - Dealloc
