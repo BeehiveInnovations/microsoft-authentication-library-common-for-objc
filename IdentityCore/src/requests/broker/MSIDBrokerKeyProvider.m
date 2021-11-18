@@ -251,7 +251,7 @@
 
     NSData *symmetricTag = [self.keyIdentifier dataUsingEncoding:NSUTF8StringEncoding];
 
-    NSDictionary* symmetricKeyQuery =
+    NSMutableDictionary* symmetricKeyQuery =
     [@{
       (id)kSecClass : (id)kSecClassKey,
       (id)kSecAttrApplicationTag : symmetricTag,
@@ -312,7 +312,7 @@
 {
     NSString *tag = [NSString stringWithFormat:@"%@-%@", MSID_BROKER_APPLICATION_TOKEN_TAG, clientId];
     
-    NSDictionary *applicationTokenQuery =
+    NSMutableDictionary *applicationTokenQuery =
     [@{
       (id)kSecClass : (id)kSecClassKey,
       (id)kSecAttrApplicationTag : [tag dataUsingEncoding:NSUTF8StringEncoding],
