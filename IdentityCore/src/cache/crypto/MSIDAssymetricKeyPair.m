@@ -255,12 +255,15 @@ static NSString *s_kidTemplate = @"{\"kid\":\"%@\"}";
     if (!_creationDate)
     {
         NSMutableDictionary *privateKeyQuery = [NSMutableDictionary new];
-        privateKeyQuery[(id)kSecAttrAccessGroup] = [self.privateKeyDict objectForKey:(id)kSecAttrAccessGroup];
         privateKeyQuery[(id)kSecClass] = (id)kSecClassKey;
         privateKeyQuery[(id)kSecAttrApplicationTag] = [self.privateKeyDict objectForKey:(id)kSecAttrApplicationTag];
         privateKeyQuery[(id)kSecAttrLabel] = [self.privateKeyDict objectForKey:(id)kSecAttrLabel];
         privateKeyQuery[(id)kSecReturnRef] = @YES;
         privateKeyQuery[(id)kSecReturnAttributes] = @YES;
+      
+#if TARGET_OS_IPHONE
+      privateKeyQuery[(id)kSecAttrAccessGroup] = [self.privateKeyDict objectForKey:(id)kSecAttrAccessGroup];
+#endif
         
         #ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
         #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500

@@ -80,7 +80,10 @@
         return nil;
     }
     
-    NSMutableDictionary *defaultKeychainQuery = [@{(id)kSecAttrAccessGroup : self.keychainGroup} mutableCopy];
+    NSMutableDictionary *defaultKeychainQuery = [NSMutableDictionary new];
+#if TARGET_OS_IPHONE
+  defaultKeychainQuery[(id)kSecAttrAccessGroup] = self.keychainGroup;
+#endif
     [defaultKeychainQuery addEntriesFromDictionary:[self additionalPlatformKeychainAttributes]];
     
     self.defaultKeychainQuery = defaultKeychainQuery;
