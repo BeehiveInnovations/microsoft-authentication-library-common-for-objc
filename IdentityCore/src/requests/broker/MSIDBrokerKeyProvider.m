@@ -212,11 +212,11 @@
       (id)kSecAttrEffectiveKeySize : @(kChosenCipherKeySize << 3),
       (id)kSecAttrCanEncrypt : @YES,
       (id)kSecAttrCanDecrypt : @YES,
-      (id)kSecValueData : keyData,
-      (id)kSecAttrAccessible : (id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+      (id)kSecValueData : keyData
       } mutableCopy];
     
 #if TARGET_OS_IPHONE
+  symmetricKeyAttr[(id)kSecAttrAccessible] = (id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
   symmetricKeyAttr[(id)kSecAttrAccessGroup] = self.keychainAccessGroup;
 #endif
     
