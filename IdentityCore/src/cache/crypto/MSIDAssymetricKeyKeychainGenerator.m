@@ -81,9 +81,9 @@
     }
     
     NSMutableDictionary *defaultKeychainQuery = [NSMutableDictionary new];
-#if TARGET_OS_IPHONE
+//#if TARGET_OS_IPHONE
   defaultKeychainQuery[(id)kSecAttrAccessGroup] = self.keychainGroup;
-#endif
+//#endif
     [defaultKeychainQuery addEntriesFromDictionary:[self additionalPlatformKeychainAttributes]];
     
     self.defaultKeychainQuery = defaultKeychainQuery;
@@ -283,7 +283,10 @@
     #ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
     #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
         if (@available(macOS 10.15, *)) {
-            return @{(id)kSecUseDataProtectionKeychain : @YES};
+            return @{
+              (id)kSecUseDataProtectionKeychain : @YES,
+              (id)kSecAttrSynchronizable : @YES
+            };
         }
     #endif
     #endif

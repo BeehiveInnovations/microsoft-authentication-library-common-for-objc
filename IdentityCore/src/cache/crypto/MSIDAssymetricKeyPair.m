@@ -261,14 +261,16 @@ static NSString *s_kidTemplate = @"{\"kid\":\"%@\"}";
         privateKeyQuery[(id)kSecReturnRef] = @YES;
         privateKeyQuery[(id)kSecReturnAttributes] = @YES;
       
-#if TARGET_OS_IPHONE
+//#if TARGET_OS_IPHONE
       privateKeyQuery[(id)kSecAttrAccessGroup] = [self.privateKeyDict objectForKey:(id)kSecAttrAccessGroup];
-#endif
+//#endif
         
         #ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
         #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
             if (@available(macOS 10.15, *)) {
                 privateKeyQuery[(id)kSecUseDataProtectionKeychain] = @YES;
+              privateKeyQuery[(id)kSecAttrSynchronizable] = @YES;
+              //privateKeyQuery[(id)kSecAttrAccessGroup] = [self.privateKeyDict objectForKey:(id)kSecAttrAccessGroup];
             }
         #endif
         #endif

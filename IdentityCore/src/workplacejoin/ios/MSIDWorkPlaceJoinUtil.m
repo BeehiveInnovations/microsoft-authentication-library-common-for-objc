@@ -117,9 +117,9 @@
     [identityDict setObject:(__bridge id) kSecAttrKeyClassPrivate forKey:(__bridge id)kSecAttrKeyClass];
     [identityDict setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
   
-#if TARGET_OS_IPHONE
+//#if TARGET_OS_IPHONE
     [identityDict setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
-#endif
+//#endif
     
     CFDictionaryRef result = NULL;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)identityDict, (CFTypeRef *)&result);

@@ -45,12 +45,12 @@ NSString *const MSID_DEVICE_INFORMATION_AAD_TENANT_ID_KEY = @"aadTenantIdentifie
     [query setObject:identifier forKey:(__bridge id<NSCopying>)(kSecAttrAccount)];
     [query setObject:(id)kCFBooleanTrue forKey:(__bridge id<NSCopying>)(kSecReturnAttributes)];
   
-#if TARGET_OS_IPHONE
+//#if TARGET_OS_IPHONE
     if (accessGroup)
     {
         [query setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
     }
-#endif
+//#endif
 
     CFDictionaryRef result = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef *)&result);
