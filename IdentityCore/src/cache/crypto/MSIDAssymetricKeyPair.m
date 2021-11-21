@@ -277,6 +277,13 @@ static NSString *s_kidTemplate = @"{\"kid\":\"%@\"}";
         
         CFDictionaryRef result = nil;
         OSStatus status = SecItemCopyMatching((CFDictionaryRef)privateKeyQuery, (CFTypeRef *)&result);
+      
+        if (status == errSecMissingEntitlement) {
+          // Try to read previous format without keychain access groups
+          [privateKeyQuery removeObjectForKey:(id)kSecAttrAccessGroup];
+        
+          status = SecItemCopyMatching((CFDictionaryRef)privateKeyQuery, (CFTypeRef *)&result);
+        }
         
         if (status != errSecSuccess)
         {

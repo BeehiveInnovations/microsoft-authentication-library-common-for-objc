@@ -201,6 +201,13 @@
     NSMutableDictionary *keychainQuery = [[self keychainQueryWithAttributes:queryDictionary] mutableCopy];
     CFDictionaryRef keyCFDict = NULL;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)keychainQuery, (CFTypeRef *)&keyCFDict);
+  
+    if (status == errSecMissingEntitlement) {
+      // Try to read previous format without keychain access groups
+      [keychainQuery removeObjectForKey:(id)kSecAttrAccessGroup];
+    
+      status = SecItemCopyMatching((__bridge CFDictionaryRef)keychainQuery, (CFTypeRef *)&keyCFDict);
+    }
     
     if (status != errSecSuccess)
     {

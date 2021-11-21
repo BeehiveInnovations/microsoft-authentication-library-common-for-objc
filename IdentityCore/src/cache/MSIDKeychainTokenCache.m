@@ -810,6 +810,13 @@ static NSString *s_defaultKeychainGroup = MSIDAdalKeychainGroup;
     MSID_LOG_WITH_CTX(MSIDLogLevelVerbose,context, @"Trying to find keychain items...");
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &cfItems);
     MSID_LOG_WITH_CTX(MSIDLogLevelInfo, context, @"Keychain find status: %d", (int)status);
+  
+    if (status == errSecMissingEntitlement) {
+      // Try to read previous format without keychain access groups
+      [query removeObjectForKey:(id)kSecAttrAccessGroup];
+  
+      status = SecItemCopyMatching((CFDictionaryRef)query, &cfItems);
+    }
     
     if (status == errSecItemNotFound)
     {
