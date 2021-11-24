@@ -158,7 +158,6 @@ static NSString *s_defaultKeychainGroup = MSIDAdalKeychainGroup;
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
     if (@available(macOS 10.15, *)) {
         defaultKeychainQuery[(id)kSecUseDataProtectionKeychain] = @YES;
-        defaultKeychainQuery[(id)kSecAttrSynchronizable] = @YES;
     }
 #endif
 #endif
@@ -177,7 +176,6 @@ static NSString *s_defaultKeychainGroup = MSIDAdalKeychainGroup;
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
         if (@available(macOS 10.15, *)) {
             defaultWipeQuery[(id)kSecUseDataProtectionKeychain] = @YES;
-          defaultWipeQuery[(id)kSecAttrSynchronizable] = @YES;
         }
 #endif
 #endif

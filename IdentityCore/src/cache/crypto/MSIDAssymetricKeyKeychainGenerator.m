@@ -291,8 +291,7 @@
     #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
         if (@available(macOS 10.15, *)) {
             return @{
-              (id)kSecUseDataProtectionKeychain : @YES,
-              (id)kSecAttrSynchronizable : @YES
+              (id)kSecUseDataProtectionKeychain : @YES
             };
         }
     #endif

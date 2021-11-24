@@ -103,7 +103,6 @@
     if (@available(macOS 10.15, *))
     {
         symmetricKeyQuery[(id)kSecUseDataProtectionKeychain] = @YES;
-        symmetricKeyQuery[(id)kSecAttrSynchronizable] = @YES;
     }
 #endif
 
@@ -241,7 +240,6 @@
     if (@available(macOS 10.15, *))
     {
         symmetricKeyAttr[(id)kSecUseDataProtectionKeychain] = @YES;
-        symmetricKeyAttr[(id)kSecAttrSynchronizable] = @YES;
     }
 #endif
 
