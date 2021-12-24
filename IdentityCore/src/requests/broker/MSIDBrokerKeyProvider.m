@@ -142,22 +142,6 @@
         CFRelease(symmetricKey);
         return result;
     }
-  
-  // One more try with default keychain group
-  NSString *keychainGroup = [[MSIDKeychainUtil sharedInstance] accessGroup:[[NSBundle mainBundle] bundleIdentifier]];
-  if (keychainGroup.length > 0) {
-    query = [symmetricKeyQuery mutableCopy];
-    query[(id)kSecAttrAccessGroup] = keychainGroup;
-    
-    err = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef *)&symmetricKey);
-    
-    if (err == errSecSuccess)
-    {
-      NSData *result = (__bridge NSData*)symmetricKey;
-      CFRelease(symmetricKey);
-      return result;
-    }
-  }
 
     return [self createBrokerKeyWithError:error];
 }
