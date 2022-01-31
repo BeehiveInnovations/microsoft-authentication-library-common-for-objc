@@ -96,9 +96,9 @@ NSString * const dummyKeyIdendetifier = @"com.microsoft.workplacejoin.dummyKeyId
     [insertStringDataQuery setObject:dataIdentifier forKey:(__bridge id<NSCopying>)(kSecAttrAccount)];
     [insertStringDataQuery setObject:stringData forKey:(__bridge id<NSCopying>)(kSecAttrService)];
 
-//#if TARGET_OS_IOS
+#if TARGET_OS_IOS
     [insertStringDataQuery setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
-//#endif
+#endif
     return SecItemAdd((__bridge CFDictionaryRef)insertStringDataQuery, NULL);
 }
 
@@ -110,9 +110,9 @@ NSString * const dummyKeyIdendetifier = @"com.microsoft.workplacejoin.dummyKeyId
     [deleteStringDataQuery setObject:dataIdentifier forKey:(__bridge id<NSCopying>)(kSecAttrAccount)];
     [deleteStringDataQuery setObject:(id)kCFBooleanTrue forKey:(__bridge id<NSCopying>)(kSecReturnAttributes)];
 
-//#if TARGET_OS_IOS
+#if TARGET_OS_IOS
     [deleteStringDataQuery setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
-//#endif
+#endif
 
     return SecItemDelete((__bridge CFDictionaryRef)(deleteStringDataQuery));
 }
