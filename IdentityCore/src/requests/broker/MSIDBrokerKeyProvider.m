@@ -92,12 +92,9 @@
       (id)kSecClass : (id)kSecClassKey,
       (id)kSecAttrApplicationTag : symmetricTag,
       (id)kSecAttrKeyType : @(CSSM_ALGID_AES),
-      (id)kSecReturnData : @(YES)
+      (id)kSecReturnData : @(YES),
+      (id)kSecAttrAccessGroup : self.keychainAccessGroup
       } mutableCopy];
-    
-//#if TARGET_OS_IPHONE
-  symmetricKeyQuery[(id)kSecAttrAccessGroup] = self.keychainAccessGroup;
-//#endif
     
 #if !TARGET_OS_IPHONE
     if (@available(macOS 10.15, *))
@@ -212,13 +209,10 @@
       (id)kSecAttrEffectiveKeySize : @(kChosenCipherKeySize << 3),
       (id)kSecAttrCanEncrypt : @YES,
       (id)kSecAttrCanDecrypt : @YES,
-      (id)kSecValueData : keyData
+      (id)kSecValueData : keyData,
+      (id)kSecAttrAccessible : (id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+      (id)kSecAttrAccessGroup : self.keychainAccessGroup
       } mutableCopy];
-    
-#if TARGET_OS_IPHONE
-  symmetricKeyAttr[(id)kSecAttrAccessible] = (id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-#endif
-  symmetricKeyAttr[(id)kSecAttrAccessGroup] = self.keychainAccessGroup;
     
 #if !TARGET_OS_IPHONE
     if (@available(macOS 10.15, *))
@@ -251,14 +245,13 @@
 
     NSData *symmetricTag = [self.keyIdentifier dataUsingEncoding:NSUTF8StringEncoding];
 
-    NSMutableDictionary* symmetricKeyQuery =
-    [@{
+    NSDictionary* symmetricKeyQuery =
+    @{
       (id)kSecClass : (id)kSecClassKey,
       (id)kSecAttrApplicationTag : symmetricTag,
-      (id)kSecAttrKeyType : @(CSSM_ALGID_AES)
-      } mutableCopy];
-  
-  symmetricKeyQuery[(id)kSecAttrAccessGroup] = self.keychainAccessGroup;
+      (id)kSecAttrKeyType : @(CSSM_ALGID_AES),
+      (id)kSecAttrAccessGroup : self.keychainAccessGroup
+      };
 
     // Delete the symmetric key.
     err = SecItemDelete((__bridge CFDictionaryRef)symmetricKeyQuery);
@@ -282,9 +275,7 @@
     NSMutableDictionary *applicationTokenAttributes = [NSMutableDictionary new];
     [applicationTokenAttributes setObject:(id)kSecClassKey forKey:(id)kSecClass];
     [applicationTokenAttributes setObject:[tag dataUsingEncoding:NSUTF8StringEncoding] forKey:(id)kSecAttrApplicationTag];
-//#if TARGET_OS_IPHONE
     [applicationTokenAttributes setObject:self.keychainAccessGroup forKey:(id)kSecAttrAccessGroup];
-//#endif
     
     NSMutableDictionary *update = [NSMutableDictionary dictionary];
     update[(id)kSecValueData] = [appToken dataUsingEncoding:NSUTF8StringEncoding];
@@ -312,16 +303,13 @@
 {
     NSString *tag = [NSString stringWithFormat:@"%@-%@", MSID_BROKER_APPLICATION_TOKEN_TAG, clientId];
     
-    NSMutableDictionary *applicationTokenQuery =
-    [@{
+    NSDictionary *applicationTokenQuery =
+    @{
       (id)kSecClass : (id)kSecClassKey,
       (id)kSecAttrApplicationTag : [tag dataUsingEncoding:NSUTF8StringEncoding],
-      (id)kSecReturnData : @(YES)
-      } mutableCopy];
-  
-//#if TARGET_OS_IPHONE
-  applicationTokenQuery[(id)kSecAttrAccessGroup] = self.keychainAccessGroup;
-//#endif
+      (id)kSecReturnData : @(YES),
+      (id)kSecAttrAccessGroup : self.keychainAccessGroup
+      };
     
     // Get the key bits.
     CFDataRef applicationToken = nil;
