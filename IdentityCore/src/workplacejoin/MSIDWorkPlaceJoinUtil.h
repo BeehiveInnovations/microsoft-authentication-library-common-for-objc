@@ -26,17 +26,26 @@
 
 @class MSIDRegistrationInformation;
 @class MSIDWorkplaceJoinChallenge;
-@class MSIDAssymetricKeyPairWithCert;
+@class MSIDWPJKeyPairWithCert;
 
 @interface MSIDWorkPlaceJoinUtil : MSIDWorkPlaceJoinUtilBase
 
+// MSIDRegistrationInformation contains keys, cert and IdentityRef - needed for Client TLS challenges
 + (nullable MSIDRegistrationInformation *)getRegistrationInformation:(nullable id<MSIDRequestContext>)context
                                               workplacejoinChallenge:(nullable MSIDWorkplaceJoinChallenge *)workplacejoinChallenge;
 
-+ (nullable MSIDAssymetricKeyPairWithCert *)getWPJKeysWithContext:(nullable id<MSIDRequestContext>)context;
+// MSIDWPJKeyPairWithCert only contains keys and cert - no IdentityRef. Can be used for PkeyAuth challenges, but not for Client TLS challenges
++ (nullable MSIDWPJKeyPairWithCert *)getWPJKeysWithTenantId:(nullable NSString *)tenantId
+                                                    context:(nullable id<MSIDRequestContext>)context;
 
 + (nullable NSString *)getWPJStringDataForIdentifier:(nonnull NSString *)identifier
                                              context:(nullable id<MSIDRequestContext>)context
                                                error:(NSError*__nullable*__nullable)error;
+
++ (nullable NSString *)getWPJStringDataFromV2ForTenantId:(NSString *_Nullable)tenantId
+                                              identifier:(nonnull NSString *)identifier
+                                                     key:(nullable NSString *)key
+                                                 context:(nullable id<MSIDRequestContext>)context
+                                                   error:(NSError*__nullable*__nullable)error;
 
 @end

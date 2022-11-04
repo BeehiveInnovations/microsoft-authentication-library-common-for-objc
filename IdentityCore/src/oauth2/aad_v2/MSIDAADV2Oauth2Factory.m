@@ -157,6 +157,8 @@
 
 #pragma mark - Network requests
 
+#if !EXCLUDE_FROM_MSALCPP
+
 - (MSIDAuthorizationCodeGrantRequest *)authorizationGrantRequestWithRequestParameters:(MSIDRequestParameters *)parameters
                                                                          codeVerifier:(NSString *)pkceCodeVerifier
                                                                              authCode:(NSString *)authCode
@@ -199,14 +201,14 @@
                                                                                                                 context:parameters];
 
     tokenRequest.responseSerializer = [[MSIDAADTokenResponseSerializer alloc] initWithOauth2Factory:self];
-    
+#if !EXCLUDE_FROM_MSALCPP
     if (parameters.currentRequestTelemetry)
     {
         __auto_type serverTelemetry = [MSIDAADTokenRequestServerTelemetry new];
         serverTelemetry.currentRequestTelemetry = parameters.currentRequestTelemetry;
         tokenRequest.serverTelemetry = serverTelemetry;
     }
-
+#endif
     return tokenRequest;
 }
 
@@ -235,16 +237,18 @@
                                                                                                       context:parameters];
     
     tokenRequest.responseSerializer = [[MSIDAADTokenResponseSerializer alloc] initWithOauth2Factory:self];
-    
+#if !EXCLUDE_FROM_MSALCPP
     if (parameters.currentRequestTelemetry)
     {
         __auto_type serverTelemetry = [MSIDAADTokenRequestServerTelemetry new];
         serverTelemetry.currentRequestTelemetry = parameters.currentRequestTelemetry;
         tokenRequest.serverTelemetry = serverTelemetry;
     }
-
+#endif
     return tokenRequest;
 }
+
+#endif
 
 #pragma mark - Authority
 

@@ -34,6 +34,7 @@
 #import "MSIDBrokerOperationRequest.h"
 #import "MSIDBrokerNativeAppOperationResponse.h"
 #import "MSIDConfiguration.h"
+#import "ASAuthorizationController+MSIDExtensions.h"
 
 @interface MSIDSSOExtensionSignoutRequest() <ASAuthorizationControllerPresentationContextProviding, ASAuthorizationControllerDelegate>
 
@@ -44,6 +45,7 @@
 @property (nonatomic, readonly) MSIDProviderType providerType;
 @property (nonatomic) BOOL shouldSignoutFromBrowser;
 @property (nonatomic) BOOL clearSSOExtensionCookies;
+@property (nonatomic) BOOL shouldWipeCacheForAllAccounts;
 
 @end
 
@@ -53,6 +55,7 @@
                           shouldSignoutFromBrowser:(BOOL)shouldSignoutFromBrowser
                                  shouldWipeAccount:(BOOL)shouldWipeAccount
                           clearSSOExtensionCookies:(BOOL)clearSSOExtensionCookies
+                     shouldWipeCacheForAllAccounts:(BOOL)shouldWipeCacheForAllAccounts
                                       oauthFactory:(nonnull MSIDOauth2Factory *)oauthFactory
 {
     self = [self initWithRequestParameters:parameters oauthFactory:oauthFactory];
@@ -62,6 +65,7 @@
         _shouldSignoutFromBrowser = shouldSignoutFromBrowser;
         _clearSSOExtensionCookies = clearSSOExtensionCookies;
         _shouldWipeAccount = shouldWipeAccount;
+        _shouldWipeCacheForAllAccounts = shouldWipeCacheForAllAccounts;
     }
     
     return self;
@@ -119,6 +123,7 @@
     signoutRequest.signoutFromBrowser = self.shouldSignoutFromBrowser;
     signoutRequest.clearSSOExtensionCookies = self.clearSSOExtensionCookies;
     signoutRequest.wipeAccount = self.shouldWipeAccount;
+    signoutRequest.wipeCacheForAllAccounts = self.shouldWipeCacheForAllAccounts;
     
     [MSIDBrokerOperationRequest fillRequest:signoutRequest
                         keychainAccessGroup:self.requestParameters.keychainAccessGroup
@@ -144,7 +149,7 @@
     self.authorizationController = [self controllerWithRequest:ssoRequest];
     self.authorizationController.delegate = self.extensionDelegate;
     self.authorizationController.presentationContextProvider = self;
-    [self.authorizationController performRequests];
+    [self.authorizationController msidPerformRequests];
     
     self.requestCompletionBlock = completionBlock;
 }
