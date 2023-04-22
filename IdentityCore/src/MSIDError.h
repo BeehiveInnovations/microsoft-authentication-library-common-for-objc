@@ -139,6 +139,7 @@ typedef NS_ENUM(NSInteger, MSIDErrorCode)
     MSIDErrorServerUnauthorizedClient   = -51414,
     MSIDErrorServerDeclinedScopes       = -51415,
     MSIDErrorServerAccessDenied         = -51416,
+    MSIDErrorServerError                = -51417,
     
     // State verification has failed
     MSIDErrorServerInvalidState         = -51420,
@@ -272,6 +273,27 @@ typedef NS_ENUM(NSInteger, MSIDErrorCode)
     // JIT - Compliance Check - Device unknown
     MSIDErrorJITComplianceCheckResultUnknown       =   -51823,
     
+    // JIT - Compliance Check - Invalid linkPayload from SSO configuration
+    MSIDErrorJITComplianceCheckInvalidLinkPayload  =   -51824,
+
+    // JIT - Compliance Check - Could not create compliance check web view controller
+    MSIDErrorJITComplianceCheckCreateController    =   -51825,
+
+    // JIT - Link - LinkConfig not found
+    MSIDErrorJITLinkConfigNotFound                 =   -51826,
+
+    // JIT - Link - Invalid LinkTokenConfig
+    MSIDErrorJITInvalidLinkTokenConfig             =   -51827,
+
+    // JIT - WPJ - Device Registration Failed
+    MSIDErrorJITWPJDeviceRegistrationFailed        =   -51828,
+
+    // JIT - WPJ - AccountIdentifier is nil
+    MSIDErrorJITWPJAccountIdentifierNil            =   -51829,
+
+    // JIT - WPJ - Failed to acquire broker token
+    MSIDErrorJITWPJAcquireTokenError               =   -51830,
+    
     // Throttling errors
     MSIDErrorThrottleCacheNoRecord = -51900,
     MSIDErrorThrottleCacheInvalidSignature = -51901,
@@ -282,8 +304,12 @@ extern NSError * _Nonnull MSIDCreateError(NSString * _Nonnull domain, NSInteger 
 
 extern MSIDErrorCode MSIDErrorCodeForOAuthError(NSString * _Nullable oauthError, MSIDErrorCode defaultCode);
 
+extern MSIDErrorCode MSIDErrorCodeForOAuthErrorWithSubErrorCode(NSString * _Nullable oauthError, MSIDErrorCode defaultCode, NSString * _Nullable subError);
+
 extern NSDictionary<NSString *, NSArray *> * _Nonnull MSIDErrorDomainsAndCodes(void);
 
 extern void MSIDFillAndLogError(NSError * _Nullable __autoreleasing * _Nullable error, MSIDErrorCode errorCode, NSString * _Nullable errorDescription, NSUUID * _Nullable correlationID);
 
 #define MSIDException(name, message, info) [NSException exceptionWithName:name reason:[NSString stringWithFormat:@"%@ (function:%s line:%i)", message, __PRETTY_FUNCTION__, __LINE__]  userInfo:info]
+
+extern NSString * _Nullable MSIDErrorCodeToString(MSIDErrorCode errorCode);

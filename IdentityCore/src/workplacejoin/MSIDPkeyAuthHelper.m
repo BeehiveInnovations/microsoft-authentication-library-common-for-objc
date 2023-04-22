@@ -32,20 +32,37 @@
 #import "MSIDWorkplaceJoinChallenge.h"
 #import "MSIDAADTokenRequestServerTelemetry.h"
 #import "MSIDADFSAuthority.h"
+#import "MSIDKeyOperationUtil.h"
+#import "MSIDExternalSSOContext.h"
 
 @implementation MSIDPkeyAuthHelper
 
 + (nullable NSString *)createDeviceAuthResponse:(nonnull NSURL *)authorizationServer
                                   challengeData:(nullable NSDictionary *)challengeData
+                             externalSSOContext:(MSIDExternalSSOContext *)externalSSOContext
                                         context:(nullable id<MSIDRequestContext>)context
 {
     NSString *authToken = @"";
     NSString *challengeContext = challengeData ? [challengeData valueForKey:@"Context"] : @"";
     NSString *challengeVersion = challengeData ? [challengeData valueForKey:@"Version"] : @"";
     NSString *challengeTenantId = challengeData ? [challengeData valueForKey:@"TenantId"] : @"";
+    NSString *serverSupportedSignatureAlgs = challengeData ? [challengeData valueForKey:@"SupportedAlgs"] : @"";
     
-    MSIDWPJKeyPairWithCert *info = [MSIDWorkPlaceJoinUtil getWPJKeysWithTenantId:challengeTenantId context:context];
+    MSIDWPJKeyPairWithCert *info = nil;
     
+    if (externalSSOContext)
+    {
+        // First try reading WPJ from the SSO context if present
+        info = [MSIDWorkPlaceJoinUtil wpjKeyPairWithSSOContext:externalSSOContext tenantId:challengeTenantId context:context];
+    }
+    
+    if (!info)
+    {
+        // If no SSO context is present, or mismatches requested tenant, try using old way
+        // This will always be the case on iOS
+        info = [MSIDWorkPlaceJoinUtil getWPJKeysWithTenantId:challengeTenantId context:context];
+    }
+        
     if (!info)
     {
         MSID_LOG_WITH_CTX(MSIDLogLevelError, context, @"No registration information found");
@@ -78,7 +95,8 @@
         authorizationServerComponents.query = nil; // Strip out query parameters.
         if (info)
         {
-            authToken = [NSString stringWithFormat:@"AuthToken=\"%@\",", [MSIDPkeyAuthHelper createDeviceAuthResponse:authorizationServerComponents.string nonce:[challengeData valueForKey:@"nonce"] identity:info]];
+            NSString *pkeyAuthToken = [MSIDPkeyAuthHelper createDeviceAuthResponse:authorizationServerComponents.string nonce:[challengeData valueForKey:@"nonce"] identity:info serverSupportedAlgs:serverSupportedSignatureAlgs];
+            authToken = pkeyAuthToken ? [NSString stringWithFormat:@"AuthToken=\"%@\",", pkeyAuthToken] : @"";
             MSID_LOG_WITH_CTX(MSIDLogLevelInfo, context, @"Found WPJ Info and responded to PKeyAuth Request.");
 #if !EXCLUDE_FROM_MSALCPP
             // Save telemetry for successful PkeyAuth ADFS challenge responses
@@ -132,6 +150,7 @@
 + (NSString *)createDeviceAuthResponse:(NSString *)audience
                                  nonce:(NSString *)nonce
                               identity:(MSIDWPJKeyPairWithCert *)identity
+                   serverSupportedAlgs:(NSString *)serverSupportedAlgs
 {
     if (!audience || !nonce)
     {
@@ -140,8 +159,27 @@
         return nil;
     }
     NSArray *arrayOfStrings = @[[NSString stringWithFormat:@"%@", [[identity certificateData] base64EncodedStringWithOptions:0]]];
+    NSError *error;
+    NSString *alg = [[MSIDKeyOperationUtil sharedInstance] getJwtAlgorithmForKey:identity.privateKeyRef context:nil error:&error];
+
+    if ([NSString msidIsStringNilOrBlank:alg])
+    {
+        MSID_LOG_WITH_CTX(MSIDLogLevelError, nil, @"Can't determine key signing alg for private key : %@", error);
+        return nil;
+    }
+    
+    if (![NSString msidIsStringNilOrBlank:serverSupportedAlgs])
+    {
+        NSSet<NSString *> *set = [NSSet setWithArray:[serverSupportedAlgs componentsSeparatedByString:@","]];
+        if (![set containsObject:alg])
+        {
+            MSID_LOG_WITH_CTX(MSIDLogLevelError, nil, @"%@", [NSString stringWithFormat: @"Server does not support client's signature alg. Server supports : %@ Client alg according to private key : %@", serverSupportedAlgs, alg]);
+            return nil;
+        }
+    }
+    
     NSDictionary *header = @{
-                             @"alg" : @"RS256",
+                             @"alg" : alg,
                              @"typ" : @"JWT",
                              @"x5c" : arrayOfStrings
                              };

@@ -141,6 +141,12 @@
     {
         accessToken.scopes = configuration.scopes;
     }
+    
+    // Cache redirect uri
+    if (![NSString msidIsStringNilOrBlank:configuration.nestedAuthBrokerClientId])
+    {
+        accessToken.redirectUri = configuration.redirectUri;
+    }
 
     return YES;
 }
@@ -198,8 +204,21 @@
                                                                                                                  claims:claims
                                                                                                            codeVerifier:pkceCodeVerifier
                                                                                                         extraParameters:parameters.extraTokenRequestParameters
+                                                                                                             ssoContext:parameters.ssoContext
                                                                                                                 context:parameters];
 
+    if ([parameters isNestedAuthProtocol])
+    {
+        MSID_LOG_WITH_CTX(MSIDLogLevelInfo, nil, @"Nested auth protocol - Adding broker client id & redirect uri to code grant request");
+        NSMutableDictionary<NSString *, NSString *> *nestedAuthParams = [tokenRequest.parameters mutableCopy];
+        
+        // Nested auth protocol
+        nestedAuthParams[MSID_NESTED_AUTH_BROKER_CLIENT_ID] = parameters.nestedAuthBrokerClientId;
+        nestedAuthParams[MSID_NESTED_AUTH_BROKER_REDIRECT_URI] = parameters.nestedAuthBrokerRedirectUri;
+        
+        tokenRequest.parameters = nestedAuthParams;
+    }
+    
     tokenRequest.responseSerializer = [[MSIDAADTokenResponseSerializer alloc] initWithOauth2Factory:self];
 #if !EXCLUDE_FROM_MSALCPP
     if (parameters.currentRequestTelemetry)
@@ -234,7 +253,20 @@
                                                                                                  refreshToken:refreshToken
                                                                                                        claims:claims
                                                                                               extraParameters:parameters.extraTokenRequestParameters
+                                                                                                   ssoContext:parameters.ssoContext
                                                                                                       context:parameters];
+
+    if ([parameters isNestedAuthProtocol])
+    {
+        MSID_LOG_WITH_CTX(MSIDLogLevelInfo, nil, @"Nested auth protocol - Adding broker client id & redirect uri to code grant request");
+        NSMutableDictionary<NSString *, NSString *> *nestedAuthParams = [tokenRequest.parameters mutableCopy];
+
+        // Nested auth protocol
+        nestedAuthParams[MSID_NESTED_AUTH_BROKER_CLIENT_ID] = parameters.nestedAuthBrokerClientId;
+        nestedAuthParams[MSID_NESTED_AUTH_BROKER_REDIRECT_URI] = parameters.nestedAuthBrokerRedirectUri;
+
+        tokenRequest.parameters = nestedAuthParams;
+    }
     
     tokenRequest.responseSerializer = [[MSIDAADTokenResponseSerializer alloc] initWithOauth2Factory:self];
 #if !EXCLUDE_FROM_MSALCPP

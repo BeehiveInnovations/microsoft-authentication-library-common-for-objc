@@ -254,12 +254,20 @@
     NSString *oauthState = [self generateStateValue];
     NSDictionary *authorizeQuery = [self authorizationParametersFromRequestParameters:parameters pkce:pkce requestState:oauthState];
     NSURL *startURL = [self startURLWithEndpoint:authorizeEndpoint authority:parameters.authority query:authorizeQuery context:parameters];
-    
+    NSString *endRedirectUri = parameters.redirectUri;
+
+    // Nested auth protocol
+    if ([parameters isNestedAuthProtocol])
+    {
+        endRedirectUri = parameters.nestedAuthBrokerRedirectUri;
+    }
+
     MSIDAuthorizeWebRequestConfiguration *configuration = [[MSIDAuthorizeWebRequestConfiguration alloc] initWithStartURL:startURL
-                                                                                  endRedirectUri:parameters.redirectUri
-                                                                                            pkce:pkce
-                                                                                           state:oauthState
-                                                                              ignoreInvalidState:NO];
+                                                                                                          endRedirectUri:endRedirectUri
+                                                                                                                    pkce:pkce
+                                                                                                                   state:oauthState
+                                                                                                      ignoreInvalidState:NO
+                                                                                                              ssoContext:parameters.ssoContext];
     configuration.customHeaders = parameters.customWebviewHeaders;
     configuration.parentController = parameters.parentViewController;
     configuration.prefersEphemeralWebBrowserSession = parameters.prefersEphemeralWebBrowserSession;
