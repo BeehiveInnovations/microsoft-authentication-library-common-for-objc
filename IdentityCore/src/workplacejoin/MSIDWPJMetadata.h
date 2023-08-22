@@ -23,19 +23,18 @@
 
 #import <Foundation/Foundation.h>
 
-#pragma once
+NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *const kMSIDPrivateKeyIdentifier;
-extern NSString *const kMSIDTenantKeyIdentifier;
-extern NSString *const kMSIDUPNKeyIdentifier;
-extern NSString *const kMSIDWPJThumbprintIdentifier;
-extern NSString *const kMSIDWPJCertificateCommonNameIdentifier;
-extern NSString *const kMSIDWPJCloudEnvironmentIdentifier;
-extern NSString *const kMSIDProtectionSpaceDistinguishedName;
-extern NSString *const kMSIDPKeyAuthUrn;
-extern NSString *const kMSIDPKeyAuthHeader;
-extern NSString *const kMSIDPKeyAuthHeaderVersion;
-extern NSString *const kMSIDWwwAuthenticateHeader;
-extern NSString *const kMSIDPKeyAuthName;
-extern NSString *const kMSIDPKeyAuthKeyWordForUserAgent;
-extern NSString *const kMSIDWPJKeychainGroupV2;
+@interface MSIDWPJMetadata : NSObject
+
+@property (nonatomic) NSString *certificateThumbprint;
+@property (nonatomic) NSString *cloudHost;
+@property (nonatomic) NSString *deviceID;
+@property (nonatomic) NSString *tenantIdentifier;
+@property (nonatomic) NSString *upn;
+
+- (nonnull NSDictionary *)serializeWithFormat:(BOOL)usePrimaryFormat;
+
+@end
+
+NS_ASSUME_NONNULL_END

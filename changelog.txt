@@ -1,3 +1,19 @@
+Version 1.7.25
+* Update broker redirect_uri validation with more information in invalid scenario (#1264)
+
+Version 1.7.24
+* Added method name with line number for errors in telemetry (#1266)
+
+Version 1.7.23
+* Added code that removes expired AT for Apple storage.
+
+Version 1.7.22
+* Remove references to deprecated api. (#1252)
+
+Version 1.7.21
+* Add troubleshooting flow when doing Just in Time registration in native apps flow (#1188)
+* Support read device info when ecc is on (#1240)
+
 Version 1.7.20
 * Minor fix, added missing header in MSIDKeyOperationUtil.h to fix CPP build
 
