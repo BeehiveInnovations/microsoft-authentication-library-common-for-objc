@@ -42,6 +42,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSArray *clientCapabilities;
 @property (nonatomic, nullable) MSIDClaimsRequest *claimsRequest;
 @property (nonatomic) NSDate *requestSentDate;
+@property (nonatomic) NSString *nonce;
+@property (nonatomic, nullable) NSString *accountHomeTenantId;
+@property (nonatomic, nullable) NSString *clientSku;
+@property (nonatomic) BOOL skipValidateResultAccount;
+@property (nonatomic) BOOL forceRefresh;
 
 + (BOOL)fillRequest:(MSIDBrokerOperationTokenRequest *)request
      withParameters:(MSIDRequestParameters *)parameters

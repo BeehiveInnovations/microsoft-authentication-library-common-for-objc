@@ -56,7 +56,6 @@ typedef NS_ENUM(NSInteger, MSIDRefreshTokenTypes)
 @interface MSIDSilentTokenRequest()
 
 @property (nonatomic) MSIDRequestParameters *requestParameters;
-@property (nonatomic) BOOL forceRefresh;
 @property (nonatomic) MSIDOauth2Factory *oauthFactory;
 @property (nonatomic) MSIDTokenResponseValidator *tokenResponseValidator;
 @property (nonatomic) MSIDAccessToken *extendedLifetimeAccessToken;
@@ -592,6 +591,7 @@ typedef NS_ENUM(NSInteger, MSIDRefreshTokenTypes)
                                   accountMetadataCache:self.metadataCache
                                        validateAccount:NO
                                       saveSSOStateOnly:NO
+                                      brokerAppVersion:nil
                                                  error:nil
                                        completionBlock:^(MSIDTokenResult *result, NSError *localError)
          {

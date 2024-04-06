@@ -60,7 +60,10 @@ clientBrokerKeyCapabilityNotSupported:parameters.clientBrokerKeyCapabilityNotSup
     request.clientCapabilities = parameters.clientCapabilities;
     request.claimsRequest = parameters.claimsRequest;
     request.requestSentDate = requestSentDate;
-        
+    request.nonce = parameters.nonce;
+    request.clientSku = parameters.clientSku;
+    request.skipValidateResultAccount = parameters.skipValidateResultAccount;
+    request.forceRefresh = parameters.forceRefresh;
     return YES;
 }
 
@@ -106,6 +109,13 @@ clientBrokerKeyCapabilityNotSupported:parameters.clientBrokerKeyCapabilityNotSup
         }
         
         _requestSentDate = [NSDate msidDateFromTimeStamp:json[MSID_BROKER_REQUEST_SENT_TIMESTAMP]];
+        
+        _nonce = [json msidStringObjectForKey:@"nonce"];
+        _accountHomeTenantId = [json msidStringObjectForKey:MSID_BROKER_ACCOUNT_HOME_TENANT_ID];
+
+        _clientSku = [json msidStringObjectForKey:MSID_CLIENT_SKU_KEY];
+        _skipValidateResultAccount = [json msidBoolObjectForKey:MSID_SKIP_VALIDATE_RESULT_ACCOUNT_KEY];
+        _forceRefresh = [json msidBoolObjectForKey:MSID_FORCE_REFRESH_KEY];
     }
     
     return self;
@@ -133,6 +143,11 @@ clientBrokerKeyCapabilityNotSupported:parameters.clientBrokerKeyCapabilityNotSup
     json[MSID_BROKER_CLIENT_CAPABILITIES_KEY] = [self.clientCapabilities componentsJoinedByString:@","];
     json[MSID_BROKER_CLAIMS_KEY] = [[self.claimsRequest jsonDictionary] msidJSONSerializeWithContext:nil];
     json[MSID_BROKER_REQUEST_SENT_TIMESTAMP] = [self.requestSentDate msidDateToFractionalTimestamp:10];
+    json[@"nonce"] = self.nonce;
+    json[MSID_BROKER_ACCOUNT_HOME_TENANT_ID] = self.accountHomeTenantId;
+    json[MSID_CLIENT_SKU_KEY] = self.clientSku;
+    json[MSID_SKIP_VALIDATE_RESULT_ACCOUNT_KEY] = [@(self.skipValidateResultAccount) stringValue];
+    json[MSID_FORCE_REFRESH_KEY] = [@(self.forceRefresh) stringValue];
     return json;
 }
 

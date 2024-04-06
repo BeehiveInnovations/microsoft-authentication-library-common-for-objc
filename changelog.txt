@@ -1,3 +1,38 @@
+TBD
+* Ignore local cache in broker request
+
+Version 1.7.33
+* Implement support for Custom URL Domains (CUD) for CIAM authorities (#1347)
+* Support for QR+PIN (#1317)
+
+Version 1.7.32-b
+* Fix pkey auth after server side removal of registration to use isDeviceRegistered flag from ssoContext
+
+Version 1.7.32-a
+* Fix pkey auth for server side removal case
+
+Version 1.7.32
+* Implement sign out request for browser sso #1328
+
+Version 1.7.31
+* Add additional error codes for PSSO KeyId mismatch (#1322)
+
+Version 1.7.30
+* ADD get token operation for BrowserCore (#1293)
+* Add support to get Passkey assertion and credentials (#1306)
+* Update key auth to use current keys on sonoma (#1312)
+* Map broker version to existing token result value (#1314)
+
+Version 1.7.29
+* Introduce a way to inject external WKWebviewConfiguration for MSIDWebviewUIController - needed for MSAL C++ (#1308)
+
+Version 1.7.28
+* Report WPJ v2 telemetry capability. (#1297)
+* Add separate error code for OneAuth telemetry purpose (#1292)
+* Logging improvements (#1290)
+* Rename some internal macro (#1300)
+* Added ccs request id flag (#1296)
+
 Version 1.7.27
 * Expose APIs for manually setting time_Interval for request and session resource. (#1288)
 
